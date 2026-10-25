@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Cestování - Radovan Kulich Portfolio</title>
+  <meta name="description" content="Cestovatelská fotografie Radovana Kulicha. Galerie z Maroka, Madeiry, Barcelony, Madridu a Monaka.">
+  <link rel="stylesheet" href="styl.css">
+  
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- Hybridní fonty: Inter pro text, Syne pro elegantní nadpisy -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Nová Plovoucí Hlavička -->
+  <header class="glass-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">RADOVAN KULICH.</a>
+      
+      <nav id="main-nav">
+        <a href="index.html#o-mne">O mně</a>
+        <a href="index.html#prace">Portfolio</a>
+        <a href="index.html#kontakt">Kontakt</a>
+        <button class="toggle-darkmode" id="darkmode-toggle">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+      </nav>
+      
+      <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Menu">
+        <div class="line line1"></div>
+        <div class="line line2"></div>
+      </button>
+    </div>
+  </header>
+  
+  <!-- Nové Mobilní Menu -->
+  <div class="nav-overlay" id="nav-overlay">
+    <nav>
+      <a href="index.html#o-mne">O MNĚ</a>
+      <a href="index.html#prace">PORTFOLIO</a>
+      <a href="index.html#kontakt">KONTAKT</a>
+      <button class="toggle-darkmode" id="darkmode-toggle-mobile">PŘEPNOUT MOTIV</button>
+    </nav>
+  </div>
+
+  <div class="container" style="padding-top: 120px;">
+
+    <section id="cestovani-gallery" class="animate-on-scroll">
+      <div class="section-header">
+        <h2>CESTOVÁNÍ</h2>
+        <p>Objevování světa mým objektivem. Fotky z různých koutů světa.</p>
+      </div>
+      
+      <div class="location-gallery" id="maroko">
+        <h3 class="location-title">Maroko 🇲🇦</h3>
+        <div class="gallery-grid">
+          <img src="images/travel/travel29.jpg" alt="Dítě s matkou v lanovce, Maroko" loading="lazy">
+          <img src="images/travel/travel34.jpg" alt="Kočka spící v papírové krabici v Maroku" loading="lazy">
+          <img src="images/travel/travel31.jpg" alt="Děti jedoucí na velbloudovi u hradeb, Maroko" loading="lazy">
+          <img src="images/travel/travel28.jpg" alt="Surfaři v půjčovně surfů, Maroko" loading="lazy">
+          <img src="images/travel/travel32.jpg" alt="Starý bílý pickup Peugeot v Maroku" loading="lazy">
+        </div>
+      </div>
+      
+      <div class="location-gallery" id="madeira">
+        <h3 class="location-title">Madeira 🇵🇹</h3>
+        <div class="gallery-grid">
+          <img src="images/travel/travel1.jpg" alt="Turisté na horské stezce nad mraky při západu slunce, Madeira" loading="lazy">
+          <img src="images/travel/travel22.jpg" alt="Lidé na ulici v Madeiře, černobílá fotka" loading="lazy">
+          <img src="images/travel/travel23.jpg" alt="Pouliční kytarista hrající na náměstí, Madeira" loading="lazy">
+          <img src="images/travel/travel24.jpg" alt="Kráva pasoucí se na louce při západu slunce, Madeira" loading="lazy">
+          <img src="images/travel/travel2.jpg" alt="Hluboké údolí v horách Madeiry" loading="lazy">
+        </div>
+      </div>
+      
+      <div class="location-gallery" id="barcelona">
+        <h3 class="location-title">Barcelona 🇪🇸</h3>
+        <div class="gallery-grid">
+          <img src="images/travel/travel11.jpg" alt="Skater ve skateparku, Barcelona" loading="lazy">
+          <img src="images/travel/travel12.jpg" alt="Muž na skateboardu ve skateparku se psem, Barcelona" loading="lazy">
+          <img src="images/travel/travel13.jpg" alt="Skupina kluků sedící na graffiti zdi, Barcelona" loading="lazy">
+          <img src="images/travel/travel14.jpg" alt="Portrét muže v mikině u moře, Barcelona" loading="lazy">
+          <img src="images/travel/travel15.jpg" alt="Cyklista na pláži při západu slunce, Barcelona" loading="lazy">
+          <img src="images/travel/travel9.jpg" alt="Abstraktní fotka eskalátorů v metru, Barcelona" loading="lazy">
+        </div>
+      </div>
+      
+      <div class="location-gallery" id="madrid">
+        <h3 class="location-title">Madrid 🇪🇸</h3>
+        <div class="gallery-grid">
+          <img src="images/travel/travel16.jpg" alt="Větrný mlýn na kopci, Madrid" loading="lazy">
+          <img src="images/travel/travel17.jpg" alt="Větrný mlýn s kamennou cestou, Madrid" loading="lazy">
+          <img src="images/travel/travel27.jpg" alt="Rozmazaná fotografie vlaku v pohybu, Madrid" loading="lazy">
+        </div>
+      </div>
+      
+      <div class="location-gallery" id="monako">
+        <h3 class="location-title">Monako 🇲🇨</h3>
+        <div class="gallery-grid">
+          <img src="images/travel/travel18.jpg" alt="Bílé Porsche 911 na přechodu, Monako" loading="lazy">
+          <img src="images/travel/travel19.jpg" alt="Detail startovní čáry na okruhu F1, Monako" loading="lazy">
+          <img src="images/travel/travel20.jpg" alt="Bílý McLaren na ulici v Monaku" loading="lazy">
+          <img src="images/travel/travel21.jpg" alt="Zástavba na svazích v Monaku" loading="lazy">
+          <img src="images/travel/travel26.jpg" alt="Detail vozu Lamborghini Countach a formule F1, Monako" loading="lazy">
+        </div>
+      </div>
+      
+      <div class="location-gallery" id="ostatni">
+        <h3 class="location-title">Ostatní 🌍</h3>
+        <div class="gallery-grid">
+          <img src="images/travel/travel25.jpg" alt="Žena čekající na zastávce v noci" loading="lazy">
+          <img src="images/travel/travel3.jpg" alt="Pouliční hudebníci v tradičních krojích" loading="lazy">
+          <img src="images/travel/travel6.jpg" alt="Muž stojící u kresby na dřevotřísce" loading="lazy">
+          <img src="images/travel/travel5.jpg" alt="Portrét domorodého muže s pomalovaným obličejem" loading="lazy">
+          <img src="images/travel/travel8.jpg" alt="Postava v kapuci na stanici metra Letňany" loading="lazy">
+          <img src="images/travel/travel33.jpg" alt="Pouliční umělec hrající na kytaru" loading="lazy">
+          <img src="images/travel/travel7.jpg" alt="Žena nastupující do metra" loading="lazy">
+          <img src="images/travel/travel4.jpg" alt="Průvod žen v tradičních krojích" loading="lazy">
+        </div>
+      </div>
+    </section>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox">
+      <span class="lightbox-close">&times;</span>
+      <span class="lightbox-prev" id="lightbox-prev">&larr;</span> 
+      <span class="lightbox-next" id="lightbox-next">&rarr;</span>
+      <img class="lightbox-content" id="lightbox-img">
+    </div>
+
+    <!-- Sítě -->
+    <section id="socials" class="animate-on-scroll">
+      <div class="section-header text-center">
+        <h2>SÍTĚ</h2>
+      </div>
+      <div class="social-feeds">
+        <div class="feed-column" id="instagram-feed">
+          <script src="https://elfsightcdn.com/platform.js" async></script>
+          <div class="elfsight-app-f335895b-2153-4433-9f97-9165818228fa" data-elfsight-app-lazy></div>
+        </div>
+        <div class="feed-column" id="tiktok-feed">
+          <script src="https://elfsightcdn.com/platform.js" async></script>
+          <div class="elfsight-app-4365f8f2-44dd-480a-abc3-5a231da8b38f" data-elfsight-app-lazy></div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>© 2025 RADOVAN KULICH. IČO 22065296.</p>
+    </footer>
+
+  </div>
+
+  <script>
+    const body = document.body;
+    const toggleBtns = document.querySelectorAll(".toggle-darkmode");
+    const isDark = localStorage.getItem("darkMode") === "true";
+    if (isDark) body.classList.add("dark-mode");
+
+    toggleBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        body.classList.toggle("dark-mode");
+        localStorage.setItem("darkMode", body.classList.contains("dark-mode"));
+      });
+    });
+
+    const mobileToggle = document.getElementById("mobile-nav-toggle");
+    const navOverlay = document.getElementById("nav-overlay");
+    const navLinks = navOverlay.querySelectorAll('nav a'); 
+
+    if (mobileToggle) {
+      mobileToggle.addEventListener("click", () => body.classList.toggle("nav-open"));
+    }
+    navLinks.forEach(link => link.addEventListener('click', () => body.classList.remove('nav-open')));
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightbox-img");
+    const closeBtn = document.querySelector(".lightbox-close");
+    const prevBtn = document.getElementById("lightbox-prev");
+    const nextBtn = document.getElementById("lightbox-next");
+    const galleryImages = Array.from(document.querySelectorAll(".gallery-grid img"));
+    let currentIndex = 0;
+    
+    const showImage = (index) => {
+      if (index < 0 || index >= galleryImages.length) return;
+      currentIndex = index; 
+      lightboxImg.src = galleryImages[currentIndex].src; 
+      lightbox.style.display = "flex"; 
+      prevBtn.style.display = (currentIndex === 0) ? "none" : "block";
+      nextBtn.style.display = (currentIndex === galleryImages.length - 1) ? "none" : "block";
+    };
+    
+    galleryImages.forEach((img, index) => {
+      img.addEventListener("click", () => showImage(index));
+    });
+    
+    nextBtn.addEventListener("click", (e) => {
+      e.stopPropagation(); 
+      showImage(currentIndex + 1); 
+    });
+    
+    prevBtn.addEventListener("click", (e) => {
+      e.stopPropagation(); 
+      showImage(currentIndex - 1); 
+    });
+    
+    const closeLightbox = () => lightbox.style.display = "none";
+    closeBtn.addEventListener("click", closeLightbox);
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+  </script>
+</body>
+</html>

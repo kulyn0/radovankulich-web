@@ -1,0 +1,578 @@
+/* === ZÁKLADNÍ NASTAVENÍ A PROMĚNNÉ === */
+:root {
+  --bg-color: #f8f8f8;
+  --text-color: #333;
+  --accent-color: #1e88e5;
+  --card-bg: #fff;
+}
+html {
+  scroll-behavior: smooth;
+}
+body.dark-mode {
+  --bg-color: #121212;
+  --text-color: #e0e0e0;
+  --accent-color: #64b5f6;
+  --card-bg: #1e1e1e;
+}
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(180deg, #ffffff 0%, #f8f8f8 300px);
+  background-attachment: fixed;
+  color: var(--text-color);
+  line-height: 1.6;
+  transition: background 0.4s, color 0.4s;
+  overflow-x: hidden; /* Zabrání horizontálnímu posunu při animacích */
+}
+body.dark-mode {
+  background: linear-gradient(180deg, #1a1a1a 0%, #121212 300px);
+  background-attachment: fixed;
+}
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+/* === HLAVIČKA A NAVIGACE (APPLE STYL S LOGEM) === */
+header {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+body.dark-mode header {
+  background-color: rgba(20, 20, 20, 0.7);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.header-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.logo-link {
+  display: flex;
+  align-items: center;
+  z-index: 1002; /* Aby bylo logo vždy nahoře */
+}
+.logo-image {
+  height: 40px;
+  width: auto;
+  display: block;
+}
+
+/* === NAVIGACE PRO DESKTOP === */
+nav {
+  display: flex;
+  align-items: center;
+}
+nav a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: var(--text-color);
+  font-weight: 500;
+  transition: color 0.3s;
+}
+nav a:hover {
+  color: var(--accent-color);
+}
+.toggle-darkmode {
+  background: none;
+  border: 1px solid var(--accent-color);
+  color: var(--accent-color);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.4rem;
+  transition: all 0.3s;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 25px;
+  padding: 0;
+}
+.toggle-darkmode:hover {
+  background: var(--accent-color);
+  color: #fff;
+}
+body.dark-mode .toggle-darkmode:hover {
+   color: #121212;
+}
+
+/* === SEKCE === */
+section {
+  padding: 60px 0;
+}
+h2 {
+  font-size: 2.3rem;
+  margin-bottom: 30px;
+}
+
+/* === HERO SEKCE (PLNÁ ŠÍŘKA) === */
+.hero {
+  padding: 100px 20px;
+  text-align: left;
+  background: linear-gradient(180deg, #0d47a1 0%, #1e88e5 60%, transparent 100%);
+  color: #fff;
+  margin-bottom: 40px;
+}
+.hero h1 {
+  font-size: 3.5rem;
+  margin: 0 0 10px;
+}
+.hero p {
+  font-size: 1.4rem;
+  color: #e0e0e0;
+  margin-bottom: 20px;
+}
+.hero a {
+  background: #fff;
+  color: #0d47a1;
+  padding: 10px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+}
+.hero a:hover {
+  background: #e3f2fd;
+}
+
+/* === STYLY PRO SEKCI "KDO JSEM" (PROFILOVKA) === */
+.about-me-layout {
+  display: flex;
+  flex-direction: column; 
+  align-items: center; 
+}
+.about-me-image img {
+  width: 200px;  
+  height: 200px; 
+  border-radius: 50%; 
+  object-fit: cover;  
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  margin-bottom: 30px; 
+}
+body.dark-mode .about-me-image img {
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* === PORTFOLIO GRID (Jen pro index.html) === */
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+}
+a.projekt {
+  background: var(--card-bg);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+}
+a.projekt:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+.projekt img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  display: block;
+}
+.projekt-info {
+  padding: 15px 20px;
+}
+.projekt-info h3 {
+  margin: 0 0 5px;
+}
+.projekt-info p {
+  font-size: 0.9rem;
+  color: #777;
+}
+
+/* === GALERIE (Pro podstránky) === */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 15px;
+}
+.gallery-grid img {
+  width: 100%;
+  height: 100%; 
+  object-fit: cover; 
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  cursor: pointer; 
+  transition: transform 0.2s ease;
+}
+.gallery-grid img:hover {
+  transform: scale(1.03); 
+}
+
+/* === LIGHTBOX (Pro podstránky) === */
+.lightbox {
+  display: none; 
+  position: fixed;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
+  justify-content: center;
+  align-items: center;
+}
+.lightbox-content {
+  max-width: 90%;
+  max-height: 90%;
+  object-fit: contain;
+}
+.lightbox-close {
+  position: absolute;
+  top: 20px;
+  right: 35px;
+  color: #fff;
+  font-size: 40px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.lightbox-prev,
+.lightbox-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 3rem;
+  color: white;
+  cursor: pointer;
+  padding: 0 20px;
+  user-select: none; 
+  transition: color 0.2s ease;
+}
+.lightbox-prev:hover,
+.lightbox-next:hover {
+  color: #bbb; 
+}
+.lightbox-prev {
+  left: 10px;
+}
+.lightbox-next {
+  right: 10px;
+}
+
+/* === STYLY PRO STRÁNKU CESTOVÁNÍ === */
+.location-gallery {
+  margin-bottom: 50px;
+  padding-bottom: 30px;
+  border-bottom: 1px solid #ddd;
+}
+body.dark-mode .location-gallery {
+  border-bottom: 1px solid #333;
+}
+.location-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 25px;
+}
+
+/* === STYLY PRO OZNÁMENÍ O SOUKROMÍ (SVATBY) === */
+.privacy-note {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  max-width: 800px;
+  padding-top: 30px;
+  margin-top: 30px;
+  border-top: 1px solid #ddd;
+}
+body.dark-mode .privacy-note {
+  border-top: 1px solid #333;
+}
+.privacy-note p {
+  margin-bottom: 15px;
+}
+
+/* === STYLY PRO SOCIÁLNÍ SÍTĚ === */
+#socials {
+  padding: 40px 0;
+  border-top: 1px solid #ddd;
+}
+body.dark-mode #socials {
+   border-top: 1px solid #333;
+}
+#socials h2 {
+  text-align: center;
+}
+.social-feeds {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+}
+.feed-column {
+  width: 50%;
+}
+
+/* === VYLEPŠENÁ SEKCE ZKUŠENOSTÍ (ŠTÍTKY) === */
+.skills-grid {
+  display: flex;
+  flex-wrap: wrap; 
+  gap: 12px; 
+}
+.skill-tag {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  padding: 10px 18px;
+  border-radius: 20px; 
+  font-weight: 500;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  transition: all 0.3s ease;
+}
+body.dark-mode .skill-tag {
+  border-color: #333;
+}
+.skill-tag:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* === VYLEPŠENÁ SEKCE KONTAKT (TLAČÍTKA) === */
+.contact-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 400px; 
+  margin: 0 auto; 
+}
+.contact-btn {
+  display: block;
+  padding: 15px 20px;
+  background-color: var(--accent-color);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  text-align: center;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+.contact-btn:hover {
+  background-color: var(--text-color); 
+  color: var(--bg-color);
+  transform: scale(1.03); 
+}
+
+/* === KONTAKT A PATIČKA === */
+#kontakt p {
+  font-size: 1.1rem;
+}
+footer {
+  text-align: center;
+  padding: 40px 0;
+  border-top: 1px solid #ddd;
+  color: #999;
+  font-size: 0.9rem;
+}
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.footer-links {
+  display: flex;
+  gap: 25px;
+}
+.footer-links a {
+  color: var(--text-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+.footer-links a:hover {
+  color: var(--accent-color);
+}
+
+/* === TLAČÍTKO ZPĚT NAHORU === */
+#scroll-to-top {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 40px;
+  height: 40px;
+  background-color: var(--card-bg);
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  color: var(--text-color);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+  z-index: 999; 
+}
+body.dark-mode #scroll-to-top {
+  border-color: #333;
+}
+#scroll-to-top:hover {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: #fff;
+  transform: translateY(-3px);
+}
+
+/* === ANIMACE PŘI SKROLOVÁNÍ (Spolehlivá verze) === */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.animate-on-scroll.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+/* === HAMBURGER MENU PRO MOBILY === */
+
+.mobile-nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1002; /* Je nad vším */
+}
+.mobile-nav-toggle .line {
+  width: 25px;
+  height: 3px;
+  background-color: var(--text-color);
+  margin: 5px 0;
+  transition: all 0.3s ease;
+}
+.nav-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: var(--bg-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-100%);
+  transition: all 0.4s ease;
+  z-index: 1001; /* Je pod tlačítkem, ale nad headerem */
+}
+.nav-overlay nav {
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.nav-overlay nav a {
+  color: var(--text-color);
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+}
+.nav-overlay .toggle-darkmode {
+  margin-top: 30px;
+  margin-left: 0;
+}
+
+/* --- Styly pro mobil --- */
+@media (max-width: 768px) {
+  
+  /* Skryjeme desktopovou navigaci */
+  #main-nav {
+    display: none;
+  }
+  
+  /* === ZMĚNA ZDE: Oprava pozice hamburgeru === */
+  .mobile-nav-toggle {
+    display: block;
+    position: fixed; /* Přilepí ho k obrazovce */
+    top: 22px; /* Zarovnání s logem */
+    right: 20px; /* Odsazení zprava */
+    z-index: 1002; /* Je nad vším, včetně overlay */
+  }
+  
+  .hero h1 {
+    font-size: 2.5rem;
+  }
+  .hero p {
+    font-size: 1.2rem;
+  }
+  h2, .location-title {
+    font-size: 1.8rem;
+  }
+  .about-me-layout {
+    flex-direction: column;
+    align-items: center;
+  }
+  .about-me-image img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+  }
+  .social-feeds {
+    flex-direction: column;
+  }
+  .feed-column {
+    width: 100%;
+  }
+}
+
+/* === STAV OTEVŘENÉHO MENU (přidá se do <body>) === */
+body.nav-open .nav-overlay {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+/* Animace hamburgeru na "X" */
+body.nav-open .mobile-nav-toggle .line1 {
+  transform: rotate(45deg) translate(5px, 6px);
+}
+body.nav-open .mobile-nav-toggle .line2 {
+  opacity: 0;
+}
+body.nav-open .mobile-nav-toggle .line3 {
+  transform: rotate(-45deg) translate(5px, -6px);
+}
+
+
+/* Desktop styl pro "Kdo jsem" */
+@media (min-width: 768px) {
+  .about-me-layout {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 40px;
+  }
+  .about-me-image {
+    flex-basis: 300px;
+    flex-shrink: 0;
+  }
+  .about-me-image img {
+    width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin-bottom: 0;
+  }
+  .about-me-text {
+     flex-basis: 100%;
+  }
+}

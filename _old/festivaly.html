@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Festivaly - Radovan Kulich Portfolio</title>
+  <meta name="description" content="Reportážní fotografie z festivalů a koncertů (Rap for People) od Radovana Kulicha.">
+  <link rel="stylesheet" href="styl.css">
+  
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+
+  <!-- Hybridní fonty: Inter pro text, Syne pro elegantní nadpisy -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Nová Plovoucí Hlavička -->
+  <header class="glass-header">
+    <div class="header-inner">
+      <a href="index.html" class="logo">RADOVAN KULICH.</a>
+      
+      <nav id="main-nav">
+        <a href="index.html#o-mne">O mně</a>
+        <a href="index.html#prace">Portfolio</a>
+        <a href="index.html#kontakt">Kontakt</a>
+        <button class="toggle-darkmode" id="darkmode-toggle">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+        </button>
+      </nav>
+      
+      <button class="mobile-nav-toggle" id="mobile-nav-toggle" aria-label="Menu">
+        <div class="line line1"></div>
+        <div class="line line2"></div>
+      </button>
+    </div>
+  </header>
+  
+  <!-- Nové Mobilní Menu -->
+  <div class="nav-overlay" id="nav-overlay">
+    <nav>
+      <a href="index.html#o-mne">O MNĚ</a>
+      <a href="index.html#prace">PORTFOLIO</a>
+      <a href="index.html#kontakt">KONTAKT</a>
+      <button class="toggle-darkmode" id="darkmode-toggle-mobile">PŘEPNOUT MOTIV</button>
+    </nav>
+  </div>
+
+  <div class="container" style="padding-top: 120px;">
+
+    <section id="festivaly-gallery" class="animate-on-scroll">
+      <div class="section-header">
+        <h2>FESTIVALY</h2>
+        <p>Hudba, emoce a atmosféra. Zachycuji jejich pravou energii.</p>
+      </div>
+      
+      <div class="gallery-grid">
+        <img src="images/opti/115.jpeg" alt="Robin Zoot na pódiu v kouři" loading="lazy">
+        <img src="images/opti/134.jpeg" alt="Pil C na pódiu ve vestě a brýlích" loading="lazy">
+        <img src="images/opti/169.jpeg" alt="Separ na festivalu v červeném světle" loading="lazy">
+        <img src="images/opti/179.jpeg" alt="Separ portrét potetovaného rappera" loading="lazy">
+        <img src="images/opti/150.jpeg" alt="Separ v červeném světle" loading="lazy">
+        <img src="images/opti/195.jpeg" alt="Separ na pódiu zezadu" loading="lazy">
+        <img src="images/opti/1106.jpeg" alt="Refew s mikrofonem v oranžovém světle" loading="lazy">
+        <img src="images/opti/133.jpeg" alt="Pil C na pódiu s ručníkem a brýlemi" loading="lazy">
+        <img src="images/opti/1103.jpeg" alt="Bubeník na koncertě v kouři" loading="lazy">
+        <img src="images/opti/163.jpeg" alt="Fanoušci v publiku na festivalu" loading="lazy">
+        <img src="images/opti/1129.jpeg" alt="Vystupující s mikrofonem na pódiu" loading="lazy">
+        <img src="images/opti/1111.jpeg" alt="Zpěvák v podřepu na pódiu" loading="lazy">
+        <img src="images/opti/RFP_80.jpeg" alt="Dorian na pódiu, pohled z podhledu" loading="lazy">
+        <img src="images/opti/1140.jpeg" alt="DJ za mixážním pultem, pohled rybím okem" loading="lazy">
+      </div>
+    </section>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="lightbox">
+      <span class="lightbox-close">&times;</span>
+      <span class="lightbox-prev" id="lightbox-prev">&larr;</span> 
+      <span class="lightbox-next" id="lightbox-next">&rarr;</span>
+      <img class="lightbox-content" id="lightbox-img">
+    </div>
+
+    <!-- Sítě -->
+    <section id="socials" class="animate-on-scroll">
+      <div class="section-header text-center">
+        <h2>SÍTĚ</h2>
+      </div>
+      <div class="social-feeds">
+        <div class="feed-column" id="instagram-feed">
+          <script src="https://elfsightcdn.com/platform.js" async></script>
+          <div class="elfsight-app-f335895b-2153-4433-9f97-9165818228fa" data-elfsight-app-lazy></div>
+        </div>
+        <div class="feed-column" id="tiktok-feed">
+          <script src="https://elfsightcdn.com/platform.js" async></script>
+          <div class="elfsight-app-4365f8f2-44dd-480a-abc3-5a231da8b38f" data-elfsight-app-lazy></div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>© 2025 RADOVAN KULICH. IČO 22065296.</p>
+    </footer>
+
+  </div>
+
+  <script>
+    const body = document.body;
+    const toggleBtns = document.querySelectorAll(".toggle-darkmode");
+    const isDark = localStorage.getItem("darkMode") === "true";
+    if (isDark) body.classList.add("dark-mode");
+
+    toggleBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        body.classList.toggle("dark-mode");
+        localStorage.setItem("darkMode", body.classList.contains("dark-mode"));
+      });
+    });
+
+    const mobileToggle = document.getElementById("mobile-nav-toggle");
+    const navOverlay = document.getElementById("nav-overlay");
+    const navLinks = navOverlay.querySelectorAll('nav a'); 
+
+    if (mobileToggle) {
+      mobileToggle.addEventListener("click", () => body.classList.toggle("nav-open"));
+    }
+    navLinks.forEach(link => link.addEventListener('click', () => body.classList.remove('nav-open')));
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+    document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightbox-img");
+    const closeBtn = document.querySelector(".lightbox-close");
+    const prevBtn = document.getElementById("lightbox-prev");
+    const nextBtn = document.getElementById("lightbox-next");
+    const galleryImages = Array.from(document.querySelectorAll(".gallery-grid img"));
+    let currentIndex = 0;
+    
+    const showImage = (index) => {
+      if (index < 0 || index >= galleryImages.length) return;
+      currentIndex = index; 
+      lightboxImg.src = galleryImages[currentIndex].src; 
+      lightbox.style.display = "flex"; 
+      prevBtn.style.display = (currentIndex === 0) ? "none" : "block";
+      nextBtn.style.display = (currentIndex === galleryImages.length - 1) ? "none" : "block";
+    };
+    
+    galleryImages.forEach((img, index) => {
+      img.addEventListener("click", () => showImage(index));
+    });
+    
+    nextBtn.addEventListener("click", (e) => {
+      e.stopPropagation(); 
+      showImage(currentIndex + 1); 
+    });
+    
+    prevBtn.addEventListener("click", (e) => {
+      e.stopPropagation(); 
+      showImage(currentIndex - 1); 
+    });
+    
+    const closeLightbox = () => lightbox.style.display = "none";
+    closeBtn.addEventListener("click", closeLightbox);
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+  </script>
+</body>
+</html>

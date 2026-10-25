@@ -35,7 +35,7 @@ jobs:
           local-dir: ./dist/
           # Zatím jen do podsložky, ostrý web na kořeni zůstává netknutý.
           # Až bude nový web hotový, změň na kořen webu (a base v astro.config.mjs na '/').
-          server-dir: /www/novy/
+          server-dir: /public_html/novy/
           # Nahrává jen změněné soubory (podle .ftp-deploy-sync-state.json na serveru).
           # Nikdy nečistí celý cíl; mimo server-dir nesahá vůbec.
           dangerous-clean-slate: false

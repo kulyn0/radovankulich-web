@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Komerční focení - Radovan Kulich Portfolio</title>
+  
+  <meta name="description" content="Komerční a produktové fotografie od Radovana Kulicha pro módní značky (Session EU) a další.">
+  <link rel="stylesheet" href="styl.css">
+  
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+</head>
+<body>
+
+  <header>
+    <div class="header-container">
+      <a href="index.html" class="logo-link">
+        <img src="images/logo.png" alt="Logo Radovan Kulich" class="logo-image">
+      </a>
+      <nav id="main-nav">
+        <a href="index.html#o-mne">Kdo jsem</a>
+        <a href="index.html#prace">Moje práce</a>
+        <a href="index.html#zkusenosti">Zkušenosti</a>
+        <a href="index.html#kontakt">Kontakt</a>
+        <button class="toggle-darkmode" id="darkmode-toggle">🌙</button>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <section id="komercni-gallery">
+      <h2>Komerční focení</h2>
+      <p>Produkty, reklamy, business portréty. Zde je výběr mých komerčních prací.</p>
+      
+      <div class="gallery-grid">
+        <img src="images/komercni/komercni-7.jpg" alt="SESSION EU Modelové v růžovém basketbalovém dresu na hřišti">
+        <img src="images/komercni/komercni-8.jpg" alt="Skupina modelů v nočním osvětlení u auta">
+        <img src="images/komercni/komercni-4.jpg" alt="Model u šedého sportovního auta Ferrari">
+        <img src="images/komercni/komercni-1.jpg" alt="Dva modelové v městském oblečení u graffiti">
+        <img src="images/komercni/komercni-3.jpg" alt="Portrét modela s kšiltovkou a brýlemi u graffiti">
+        <img src="images/komercni/komercni-5.jpg" alt="Model u červeného sportovního auta Ferrari">
+        <img src="images/komercni/komercni-6.jpg" alt="Model a modelka v růžovém oblečení ve fotoateliéru">
+        <img src="images/komercni/komercni-2.jpg" alt="Screenshot z Instagramu - módní značka Session EU">
+      </div>
+    </section>
+
+    <div id="lightbox" class="lightbox">
+      <span class="lightbox-close">&times;</span>
+      <span class="lightbox-prev" id="lightbox-prev">&larr;</span> 
+      <span class="lightbox-next" id="lightbox-next">&rarr;</span>
+      <img class="lightbox-content" id="lightbox-img">
+    </div>
+
+    <section id="socials">
+      <div class="container">
+        <h2>Sleduj mě na sítích</h2>
+        <div class="social-feeds">
+          <div class="feed-column" id="instagram-feed">
+            <script src="https://elfsightcdn.com/platform.js" async></script>
+            <div class="elfsight-app-f335895b-2153-4433-9f97-9165818228fa" data-elfsight-app-lazy></div>
+          </div>
+          <div class="feed-column" id="tiktok-feed">
+            <script src="https://elfsightcdn.com/platform.js" async></script>
+            <div class="elfsight-app-4365f8f2-44dd-480a-abc3-5a231da8b38f" data-elfsight-app-lazy></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>© 2025 Radovan Kulich. IČO 22065296.</p>
+    </footer>
+
+  </div>
+
+  <script>
+    // DARK MODE
+    const toggle = document.getElementById("darkmode-toggle");
+    const body = document.body;
+    const updateEmoji = () => {
+      if (body.classList.contains("dark-mode")) {
+        toggle.innerHTML = "☀️";
+      } else {
+        toggle.innerHTML = "🌙";
+      }
+    };
+    if(localStorage.getItem("darkMode") === "true") {
+      body.classList.add("dark-mode");
+    }
+    updateEmoji(); 
+    toggle.addEventListener("click", () => {
+      body.classList.toggle("dark-mode");
+      localStorage.setItem("darkMode", body.classList.contains("dark-mode"));
+      updateEmoji();
+    });
+
+    // LIGHTBOX
+    const lightbox = document.getElementById("lightbox");
+    const lightboxImg = document.getElementById("lightbox-img");
+    const closeBtn = document.querySelector(".lightbox-close");
+    const prevBtn = document.getElementById("lightbox-prev");
+    const nextBtn = document.getElementById("lightbox-next");
+    const galleryImages = Array.from(document.querySelectorAll(".gallery-grid img"));
+    let currentIndex = 0;
+    const showImage = (index) => {
+      if (index < 0 || index >= galleryImages.length) return;
+      currentIndex = index; 
+      lightboxImg.src = galleryImages[currentIndex].src; 
+      lightbox.style.display = "flex"; 
+      prevBtn.style.display = (currentIndex === 0) ? "none" : "block";
+      nextBtn.style.display = (currentIndex === galleryImages.length - 1) ? "none" : "block";
+    };
+    galleryImages.forEach((img, index) => {
+      img.addEventListener("click", () => showImage(index));
+    });
+    nextBtn.addEventListener("click", (e) => {
+      e.stopPropagation(); 
+      showImage(currentIndex + 1); 
+    });
+    prevBtn.addEventListener("click", (e) => {
+      e.stopPropagation(); 
+      showImage(currentIndex - 1); 
+    });
+    const closeLightbox = () => lightbox.style.display = "none";
+    closeBtn.addEventListener("click", closeLightbox);
+    lightbox.addEventListener("click", (e) => {
+      if (e.target === lightbox) closeLightbox();
+    });
+  </script>
+</body>
+</html>
