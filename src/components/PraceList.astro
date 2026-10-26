@@ -1,0 +1,229 @@
+---
+// Seznam kategorií s náhledem u kurzoru (podle „Hover Preview“ z 21st.dev, vanilla JS).
+// Na dotykových zařízeních místo náhledu u kurzoru statická miniatura v řádku.
+import Foto from './Foto.astro';
+import { kategorie, url } from '../data/site';
+import { prvniFoto } from '../lib/fotky';
+
+const items = kategorie.map((k, i) => ({ ...k, cislo: String(i + 1).padStart(2, '0'), foto: prvniFoto(k.slug) }));
+---
+<section id="prace" class="prace section" aria-labelledby="prace-title" data-prace>
+  <div class="wrap">
+    <h2 id="prace-title" class="mono muted prace__label" data-reveal>Práce</h2>
+    <ul class="prace__list">
+      {items.map((k, i) => (
+        <li data-reveal style={`--reveal-delay: ${i * 0.05}s`}>
+          <a class="prace__row" href={url(`${k.slug}/`)} data-preview={i}>
+            <span class="mono muted prace__num">{k.cislo}</span>
+            <span class="prace__name">{k.nazev}</span>
+            <span class="mono muted prace__word">{k.slovo}</span>
+            {k.foto && (
+              <span class="prace__thumb" aria-hidden="true">
+                <Foto image={k.foto} alt="" sizes="96px" />
+              </span>
+            )}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="prace__preview" aria-hidden="true" data-preview-box>
+    {items.map((k, i) => k.foto && (
+      <div class="prace__preview-img" data-preview-img={i}>
+        <Foto image={k.foto} alt="" sizes="360px" />
+      </div>
+    ))}
+  </div>
+</section>
+
+<style>
+  .prace__label {
+    margin: 0 0 2rem;
+  }
+
+  .prace__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--line);
+  }
+
+  .prace__list li {
+    border-bottom: 1px solid var(--line);
+  }
+
+  .prace__row {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr auto;
+    align-items: baseline;
+    gap: 1rem;
+    padding-block: clamp(0.75rem, 2vw, 1.25rem);
+    transition: color 0.3s var(--ease-out);
+  }
+
+  .prace__name {
+    font-size: clamp(2rem, 8.5vw, 7rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.045em;
+    text-transform: uppercase;
+    transition: transform 0.4s var(--ease-out);
+  }
+
+  .prace__thumb {
+    display: none;
+  }
+
+  /* Myš: ostatní řádky zešednou, náhled u kurzoru */
+  @media (hover: hover) and (pointer: fine) {
+    .prace__list:hover .prace__row {
+      color: var(--muted);
+    }
+
+    .prace__list:hover .prace__row:hover {
+      color: var(--fg);
+    }
+
+    .prace__row:hover .prace__name {
+      transform: translateX(0.5rem);
+    }
+  }
+
+  .prace__preview {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 40;
+    width: clamp(220px, 22vw, 340px);
+    aspect-ratio: 4 / 5;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate3d(-50%, -50%, 0) scale(0.9);
+    transition:
+      opacity 0.25s ease-out,
+      scale 0.25s ease-out;
+    overflow: hidden;
+  }
+
+  .prace__preview.is-active {
+    opacity: 1;
+  }
+
+  .prace__preview-img {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+  }
+
+  .prace__preview-img.is-active {
+    opacity: 1;
+  }
+
+  .prace__preview-img :global(picture),
+  .prace__preview-img :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Dotyk: statická miniatura v řádku, plovoucí náhled vypnutý */
+  @media not ((hover: hover) and (pointer: fine)) {
+    .prace__preview {
+      display: none;
+    }
+
+    .prace__row {
+      grid-template-columns: 2rem 1fr 4.5rem;
+      align-items: center;
+    }
+
+    .prace__word {
+      display: none;
+    }
+
+    .prace__thumb {
+      display: block;
+      width: 4.5rem;
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+      background: var(--line);
+    }
+
+    .prace__thumb :global(picture),
+    .prace__thumb :global(img) {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+</style>
+
+<script>
+  let cleanup: (() => void) | undefined;
+
+  function init() {
+    cleanup?.();
+    const root = document.querySelector<HTMLElement>('[data-prace]');
+    if (!root || !window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+
+    const box = root.querySelector<HTMLElement>('[data-preview-box]')!;
+    const imgs = [...box.querySelectorAll<HTMLElement>('[data-preview-img]')];
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let x = 0;
+    let y = 0;
+    let cx = 0;
+    let cy = 0;
+    let raf = 0;
+    let active = false;
+
+    // Náhled jemně dobíhá kurzor
+    const tick = () => {
+      cx += (x - cx) * (reduce ? 1 : 0.18);
+      cy += (y - cy) * (reduce ? 1 : 0.18);
+      box.style.transform = `translate3d(${cx}px, ${cy}px, 0) translate(-50%, -50%) scale(${active ? 1 : 0.9})`;
+      raf = active || Math.abs(x - cx) > 0.5 ? requestAnimationFrame(tick) : 0;
+    };
+
+    const onMove = (e: PointerEvent) => {
+      x = e.clientX + 40;
+      y = e.clientY;
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+
+    const show = (i: string) => {
+      if (!active) {
+        cx = x;
+        cy = y;
+      }
+      active = true;
+      box.classList.add('is-active');
+      imgs.forEach((img) => img.classList.toggle('is-active', img.dataset.previewImg === i));
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+
+    const hide = () => {
+      active = false;
+      box.classList.remove('is-active');
+    };
+
+    const rows = [...root.querySelectorAll<HTMLElement>('[data-preview]')];
+    const enter = (e: Event) => show((e.currentTarget as HTMLElement).dataset.preview!);
+    rows.forEach((row) => {
+      row.addEventListener('pointerenter', enter);
+      row.addEventListener('focus', enter);
+      row.addEventListener('blur', hide);
+    });
+    const list = root.querySelector<HTMLElement>('.prace__list')!;
+    list.addEventListener('pointerleave', hide);
+    window.addEventListener('pointermove', onMove, { passive: true });
+
+    cleanup = () => {
+      window.removeEventListener('pointermove', onMove);
+      cancelAnimationFrame(raf);
+    };
+  }
+
+  document.addEventListener('astro:page-load', init);
+</script>
