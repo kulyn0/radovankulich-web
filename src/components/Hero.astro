@@ -1,0 +1,248 @@
+---
+// Scroll choreografie (podle „Scroll Choreography“ z 21st.dev, přepsáno do vanilla JS):
+// čtyři fotky se při scrollu sjedou ze čtyř rohů, první (svatba) se roztáhne přes celou obrazovku.
+import Foto from './Foto.astro';
+import { fotky } from '../lib/fotky';
+
+// TODO: vyměnit placeholder fotky v src/fotky/hero/ (1 svatba, 2 ples, 3 sport, 4 festival)
+const hero = fotky('hero').slice(0, 4);
+const popisky = ['Svatba', 'Ples', 'Sport', 'Festival'];
+---
+<section class="hero" data-hero aria-label="Úvod">
+  <div class="hero__stage">
+    <div class="hero__intro" aria-hidden="true">
+      <p class="mono muted">Radovan Kulich</p>
+      <p class="hero__intro-title">Fotograf<br />&amp; videomaker</p>
+    </div>
+
+    {hero.map((f, i) => (
+      <div class={`hero__tile hero__tile--${i + 1}`} data-tile={i}>
+        <Foto image={f.image} alt={`${popisky[i]} – ukázka fotografie`} sizes={i === 0 ? '100vw' : '(min-width: 900px) 25vw, 45vw'} eager />
+      </div>
+    ))}
+
+    <div class="hero__text">
+      <h1 class="display">Fotograf<br />&amp; videomaker</h1>
+      <p class="mono">Prostějov a okolí</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    /* Stage začíná pod průhlednou částí hlavičky, ať je na první obrazovce celá */
+    margin-top: calc(-1 * var(--header-h));
+    height: 280vh;
+    --p: 1;
+  }
+
+  .hero__stage {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+  }
+
+  .hero__intro {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-content: center;
+    gap: 1rem;
+    text-align: center;
+    opacity: calc(1 - var(--p) * 2.5);
+  }
+
+  .hero__intro p {
+    margin: 0;
+  }
+
+  .hero__intro-title {
+    font-size: clamp(2.5rem, 9vw, 7rem);
+    font-weight: 800;
+    line-height: 0.88;
+    letter-spacing: -0.045em;
+    text-transform: uppercase;
+  }
+
+  .hero__tile {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    background: var(--line);
+    transform-origin: 0 0;
+    will-change: transform, width, height;
+  }
+
+  .hero__tile :global(picture),
+  .hero__tile :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .hero__tile--1 {
+    z-index: 2;
+  }
+
+  /* Bez JS / reduced motion: rovnou finální stav, svatba přes celou obrazovku */
+  .hero__tile--1 {
+    width: 100%;
+    height: 100%;
+  }
+
+  .hero__tile--2,
+  .hero__tile--3,
+  .hero__tile--4 {
+    display: none;
+  }
+
+  :global(.js) .hero.is-animated .hero__tile {
+    display: block;
+  }
+
+  .hero__text {
+    position: absolute;
+    inset: auto 0 0 0;
+    z-index: 3;
+    display: grid;
+    gap: 1rem;
+    padding: var(--gutter);
+    padding-bottom: clamp(2rem, 6vw, 4rem);
+    color: #fafafa;
+    opacity: clamp(0, (var(--p) - 0.8) * 5, 1);
+    pointer-events: none;
+  }
+
+  .hero__text::before {
+    /* Plošné ztmavení fotky pod textem kvůli čitelnosti (bez gradientu) */
+    content: '';
+    position: absolute;
+    inset: -100vh 0 0 0;
+    z-index: -1;
+    background: rgb(17 17 17 / 0.28);
+  }
+
+  .hero__text p {
+    margin: 0;
+  }
+
+  .hero:not(.is-animated) {
+    height: auto;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero {
+      height: auto;
+    }
+  }
+</style>
+
+<script>
+  // Pozice dlaždic: start v rozích → shluk 2×2 uprostřed → svatba přes celou obrazovku.
+  type Rect = { x: number; y: number; w: number; h: number };
+
+  const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+  const ease = (t: number) => 1 - Math.pow(1 - t, 3);
+  const clamp01 = (t: number) => Math.min(1, Math.max(0, t));
+  const lerpRect = (a: Rect, b: Rect, t: number): Rect => ({
+    x: lerp(a.x, b.x, t),
+    y: lerp(a.y, b.y, t),
+    w: lerp(a.w, b.w, t),
+    h: lerp(a.h, b.h, t),
+  });
+
+  let cleanup: (() => void) | undefined;
+
+  function init() {
+    cleanup?.();
+    const hero = document.querySelector<HTMLElement>('[data-hero]');
+    if (!hero || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const tiles = [...hero.querySelectorAll<HTMLElement>('[data-tile]')];
+    hero.classList.add('is-animated');
+
+    let vw = 0;
+    let vh = 0;
+    let starts: Rect[] = [];
+    let mids: Rect[] = [];
+
+    const measure = () => {
+      vw = window.innerWidth;
+      vh = hero.querySelector<HTMLElement>('.hero__stage')!.clientHeight;
+      const mobile = vw < 700;
+      const m = mobile ? 12 : 24;
+      const top = (document.querySelector<HTMLElement>('[data-header]')?.offsetHeight ?? 72) + m;
+      const avail = vh - top - m;
+      // Dlaždice nesmí zasahovat do prostředního pásu s nadpisem
+      const w = mobile ? Math.min(vw * 0.34, (avail * 0.3) / 1.25) : Math.min(vw * 0.2, (avail * 0.42) / 1.25);
+      const h = w * 1.25;
+      // Rohy: vlevo nahoře, vpravo nahoře, vlevo dole, vpravo dole
+      starts = [
+        { x: m, y: top, w, h },
+        { x: vw - w - m, y: top, w, h },
+        { x: m, y: vh - h - m, w, h },
+        { x: vw - w - m, y: vh - h - m, w, h },
+      ];
+      const cw = mobile ? Math.min(vw * 0.4, avail * 0.3) : Math.min(vw * 0.16, avail * 0.36 / 1.25);
+      const ch = cw * 1.25;
+      const g = 8;
+      const cx = vw / 2;
+      const cy = vh / 2;
+      mids = [
+        { x: cx - cw - g / 2, y: cy - ch - g / 2, w: cw, h: ch },
+        { x: cx + g / 2, y: cy - ch - g / 2, w: cw, h: ch },
+        { x: cx - cw - g / 2, y: cy + g / 2, w: cw, h: ch },
+        { x: cx + g / 2, y: cy + g / 2, w: cw, h: ch },
+      ];
+    };
+
+    const full: () => Rect = () => ({ x: 0, y: 0, w: vw, h: vh });
+
+    const render = () => {
+      const total = hero.offsetHeight - vh;
+      const p = clamp01(-hero.getBoundingClientRect().top / total);
+      hero.style.setProperty('--p', p.toFixed(4));
+
+      const gather = ease(clamp01(p / 0.5));
+      const expand = ease(clamp01((p - 0.5) / 0.4));
+
+      tiles.forEach((tile, i) => {
+        let r = lerpRect(starts[i], mids[i], gather);
+        if (i === 0) r = lerpRect(r, full(), expand);
+        tile.style.transform = `translate3d(${r.x}px, ${r.y}px, 0)`;
+        tile.style.width = `${r.w}px`;
+        tile.style.height = `${r.h}px`;
+        if (i > 0) tile.style.opacity = String(1 - expand);
+      });
+    };
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        render();
+        ticking = false;
+      });
+    };
+    const onResize = () => {
+      measure();
+      render();
+    };
+
+    measure();
+    render();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onResize);
+    cleanup = () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onResize);
+    };
+  }
+
+  document.addEventListener('astro:page-load', init);
+</script>
