@@ -1,0 +1,50 @@
+---
+import { kontakt } from '../data/site';
+
+interface Props {
+  title?: string;
+}
+
+const { title = 'Máte akci?' } = Astro.props;
+---
+<section class="cta section" aria-labelledby="cta-title">
+  <div class="wrap">
+    <p class="mono muted" data-reveal>Spolupráce</p>
+    <h2 id="cta-title" class="display cta__title" data-reveal>{title}</h2>
+    <ul class="cta__links">
+      <li data-reveal>
+        <a class="cta__big link-line" href={`mailto:${kontakt.email}`}>{kontakt.email}</a>
+      </li>
+      <li data-reveal>
+        <a class="cta__big link-line" href={kontakt.telefonHref}>{kontakt.telefon}</a>
+      </li>
+      <li data-reveal>
+        <a class="mono link-line" href={kontakt.instagramUrl} rel="me noopener" target="_blank">
+          Instagram {kontakt.instagram} ↗
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .cta__title {
+    margin-block: 1rem clamp(2rem, 6vw, 4rem);
+  }
+
+  .cta__links {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cta__big {
+    font-size: clamp(1.5rem, 5.5vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    overflow-wrap: anywhere;
+  }
+</style>

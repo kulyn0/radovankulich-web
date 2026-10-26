@@ -1,6 +1,39 @@
 ---
+import { kontakt, url } from '../data/site';
+
 const year = new Date().getFullYear();
 ---
 <footer class="site-footer">
-  <p>© {year} Radovan Kulich</p>
+  <hr class="hairline" />
+  <div class="wrap site-footer__inner mono">
+    <p>© {year} {kontakt.jmeno} / IČO {kontakt.ico}</p>
+    <ul>
+      <li><a class="link-line" href={kontakt.instagramUrl} rel="me noopener" target="_blank">Instagram ↗</a></li>
+      <li><a class="link-line" href={kontakt.zonerama} rel="noopener" target="_blank">Klientská galerie ↗</a></li>
+      <li><a class="link-line muted" href={url('stary-web/')}>Starý web</a></li>
+    </ul>
+  </div>
 </footer>
+
+<style>
+  .site-footer__inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding-block: 2rem;
+  }
+
+  p,
+  ul {
+    margin: 0;
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    padding: 0;
+    list-style: none;
+  }
+</style>

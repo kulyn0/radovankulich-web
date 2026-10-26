@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContactCta from '../components/ContactCta.astro';
+import { kategorie, url, type Kategorie } from '../data/site';
+
+export function getStaticPaths() {
+  return kategorie.map((k, i) => ({ params: { kategorie: k.slug }, props: { k, i } }));
+}
+
+interface Props {
+  k: Kategorie;
+  i: number;
+}
+
+const { k, i } = Astro.props;
+const total = kategorie.length;
+const prev = kategorie[(i - 1 + total) % total];
+const next = kategorie[(i + 1) % total];
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+<BaseLayout title={k.nazev} description={`${k.nazev} – ${k.popis} Radovan Kulich, fotograf Prostějov.`}>
+  <section class="wrap section intro">
+    <p class="mono muted">{pad(i + 1)} / {pad(total)}</p>
+    <h1 class="display">{k.nazev}</h1>
+    <p class="lead">{k.popis}</p>
+  </section>
+
+  <nav class="wrap pager" aria-label="Další kategorie">
+    <a class="link-line" href={url(`${prev.slug}/`)}>← {prev.nazev}</a>
+    <a class="link-line" href={url(`${next.slug}/`)}>{next.nazev} →</a>
+  </nav>
+
+  <ContactCta title="Napište mi" />
+</BaseLayout>
+
+<style>
+  .intro {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .intro p {
+    margin: 0;
+  }
+
+  .pager {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 2rem;
+    border-top: 1px solid var(--line);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+  }
+</style>

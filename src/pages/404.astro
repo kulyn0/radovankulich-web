@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { url } from '../data/site';
+---
+<BaseLayout title="Stránka nenalezena">
+  <section class="wrap section">
+    <p class="mono muted">404</p>
+    <h1 class="display">Tady nic není</h1>
+    <p><a class="link-line" href={url()}>Zpět na úvod →</a></p>
+  </section>
+</BaseLayout>

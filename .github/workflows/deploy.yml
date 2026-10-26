@@ -23,6 +23,14 @@ jobs:
       - name: Instalace závislostí
         run: npm ci
 
+      # Cache zmenšených fotek, ať se při každém buildu nepřepočítávají
+      - name: Cache obrázků
+        uses: actions/cache@v4
+        with:
+          path: node_modules/.astro
+          key: astro-images-${{ hashFiles('src/fotky/**') }}
+          restore-keys: astro-images-
+
       - name: Build
         run: npm run build
 

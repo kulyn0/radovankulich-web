@@ -1,9 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-
-const oldSite = `${import.meta.env.BASE_URL}_old/index.html`;
+import { url } from '../data/site';
 ---
-<BaseLayout title="Starý web – Radovan Kulich">
-  <h1>Starý web</h1>
-  <p><a href={oldSite}>Otevřít zálohu původního webu</a></p>
+<BaseLayout title="Starý web">
+  <section class="wrap section">
+    <h1 class="headline">Starý web</h1>
+    <p><a class="link-line" href={url('_old/index.html')}>Otevřít zálohu původního webu ↗</a></p>
+  </section>
 </BaseLayout>
