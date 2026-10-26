@@ -1,7 +1,11 @@
 ---
+import { getImage } from 'astro:assets';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactCta from '../components/ContactCta.astro';
+import Foto from '../components/Foto.astro';
+import Galerie from '../components/Galerie.astro';
 import { kategorie, url, type Kategorie } from '../data/site';
+import { fotky } from '../lib/fotky';
 
 export function getStaticPaths() {
   return kategorie.map((k, i) => ({ params: { kategorie: k.slug }, props: { k, i } }));
@@ -17,40 +21,116 @@ const total = kategorie.length;
 const prev = kategorie[(i - 1 + total) % total];
 const next = kategorie[(i + 1) % total];
 const pad = (n: number) => String(n).padStart(2, '0');
+
+// TODO: svatby zatím obsahují náhradní fotky z plesů – starý web svatební fotky
+// z ohledu na soukromí nevystavoval. Doplnit vlastní výběr se souhlasem párů.
+const [hlavni, ...ostatni] = fotky(k.slug);
+const hlavniLightbox = hlavni ? await getImage({ src: hlavni.image, width: Math.min(2400, hlavni.image.width), format: 'webp', quality: 75 }) : undefined;
 ---
-<BaseLayout title={k.nazev} description={`${k.nazev} – ${k.popis} Radovan Kulich, fotograf Prostějov.`}>
-  <section class="wrap section intro">
-    <p class="mono muted">{pad(i + 1)} / {pad(total)}</p>
-    <h1 class="display">{k.nazev}</h1>
-    <p class="lead">{k.popis}</p>
-  </section>
+<BaseLayout title={k.nazev} description={`${k.nazev}: ${k.popis} Radovan Kulich, fotograf a videomaker z Prostějova.`} ogImage={hlavni?.image}>
+  <div data-gallery>
+    <section class="wrap intro">
+      <p class="mono muted">{pad(i + 1)} / {pad(total)}</p>
+      <h1 class="display">{k.nazev}</h1>
+      <p class="lead">{k.popis}</p>
+      {k.slug !== 'plesy' && <p class="mono muted">Cena individuálně podle rozsahu – <a class="link-line" href={url('kontakt/')}>napište mi</a>.</p>}
+    </section>
+
+    {hlavni && hlavniLightbox && (
+      <a
+        class="hlavni"
+        href={hlavniLightbox.src}
+        data-pswp
+        data-pswp-width={hlavniLightbox.attributes.width}
+        data-pswp-height={Math.round((hlavni.image.height / hlavni.image.width) * Number(hlavniLightbox.attributes.width))}
+        data-index="0"
+        data-cursor="otevřít"
+      >
+        <Foto image={hlavni.image} alt={`${k.nazev} – fotografie 1`} sizes="100vw" eager />
+      </a>
+    )}
+
+    <slot name="pred-galerii" />
+
+    {ostatni.length > 0 && (
+      <section class="wrap galerie" aria-label={`Galerie ${k.nazev}`}>
+        <Galerie fotky={ostatni} alt={k.nazev} startIndex={1} />
+      </section>
+    )}
+  </div>
 
   <nav class="wrap pager" aria-label="Další kategorie">
-    <a class="link-line" href={url(`${prev.slug}/`)}>← {prev.nazev}</a>
-    <a class="link-line" href={url(`${next.slug}/`)}>{next.nazev} →</a>
+    <a href={url(`${prev.slug}/`)}>
+      <span class="mono muted">Předchozí</span>
+      <span class="pager__name">← {prev.nazev}</span>
+    </a>
+    <a class="pager__next" href={url(`${next.slug}/`)}>
+      <span class="mono muted">Další</span>
+      <span class="pager__name">{next.nazev} →</span>
+    </a>
   </nav>
 
   <ContactCta title="Napište mi" />
 </BaseLayout>
 
+<script>
+  import { initGalerie } from '../scripts/galerie';
+
+  document.addEventListener('astro:page-load', initGalerie);
+</script>
+
 <style>
   .intro {
     display: grid;
     gap: 1.25rem;
+    padding-block: clamp(3rem, 10vw, 8rem) clamp(2rem, 6vw, 4rem);
   }
 
   .intro p {
     margin: 0;
   }
 
+  .hlavni {
+    display: block;
+    background: var(--line);
+  }
+
+  .hlavni :global(img) {
+    width: 100%;
+    max-height: 92vh;
+    object-fit: cover;
+  }
+
+  .galerie {
+    padding-block: 8px clamp(4rem, 10vw, 8rem);
+  }
+
   .pager {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 1rem;
-    padding-block: 2rem;
+    padding-block: 2.5rem;
     border-top: 1px solid var(--line);
-    font-weight: 700;
+  }
+
+  .pager a {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .pager__next {
+    text-align: right;
+  }
+
+  .pager__name {
+    font-size: clamp(1.25rem, 4vw, 2.5rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
     text-transform: uppercase;
-    letter-spacing: -0.01em;
+    line-height: 1;
+  }
+
+  .pager a:hover .pager__name {
+    color: var(--muted);
   }
 </style>

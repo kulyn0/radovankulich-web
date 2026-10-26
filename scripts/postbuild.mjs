@@ -1,9 +1,28 @@
 // Po buildu: zkopíruje zálohu starého webu a vygeneruje .htaccess a robots.txt.
-import { cpSync, existsSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 // Musí odpovídat base v astro.config.mjs.
 const BASE = '/novy/';
 const SITE = 'https://radovankulich.cz';
+
+// Astro přibalí i originály importovaných fotek; nikde se nepoužívají, takže je smažeme.
+function htmlFiles(dir) {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((e) => {
+    const p = join(dir, e.name);
+    if (e.isDirectory()) return p === 'dist/_old' ? [] : htmlFiles(p);
+    return /\.(html|css|xml)$/.test(e.name) ? [p] : [];
+  });
+}
+const referenced = htmlFiles('dist').map((f) => readFileSync(f, 'utf8')).join('\n');
+let removed = 0;
+for (const f of readdirSync('dist/_astro')) {
+  if (/^[^_]+\.[\w-]{8}\.(jpe?g|png|webp|avif)$/i.test(f) && !referenced.includes(f)) {
+    rmSync(join('dist/_astro', f));
+    removed++;
+  }
+}
+console.log(`Smazáno ${removed} nepoužitých originálů fotek`);
 
 // Záloha starého webu, aby fungoval odkaz ze stránky /stary-web
 if (existsSync('_old')) {

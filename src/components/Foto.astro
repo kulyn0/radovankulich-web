@@ -1,0 +1,38 @@
+---
+import { getImage } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { sirky } from '../lib/fotky';
+
+interface Props {
+  image: ImageMetadata;
+  alt: string;
+  sizes: string;
+  eager?: boolean;
+  class?: string;
+}
+
+const { image, alt, sizes, eager = false, class: className } = Astro.props;
+
+// AVIF a WebP mají každý jinou kvalitu se srovnatelným výsledkem (AVIF q55 ≈ WebP q75).
+const widths = sirky(image);
+const srcset = async (format: 'avif' | 'webp', quality: number) => {
+  const variants = await Promise.all(widths.map((width) => getImage({ src: image, width, format, quality })));
+  return variants.map((v, i) => `${v.src} ${widths[i]}w`).join(', ');
+};
+const [avif, webp] = await Promise.all([srcset('avif', 55), srcset('webp', 75)]);
+const fallback = await getImage({ src: image, width: widths[Math.min(1, widths.length - 1)], format: 'webp', quality: 75 });
+---
+<picture class={className}>
+  <source type="image/avif" srcset={avif} sizes={sizes} />
+  <source type="image/webp" srcset={webp} sizes={sizes} />
+  <img
+    src={fallback.src}
+    alt={alt}
+    width={image.width}
+    height={image.height}
+    loading={eager ? 'eager' : 'lazy'}
+    decoding={eager ? 'sync' : 'async'}
+    fetchpriority={eager ? 'high' : undefined}
+    class={className}
+  />
+</picture>

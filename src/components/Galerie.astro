@@ -1,0 +1,102 @@
+---
+import { getImage } from 'astro:assets';
+import type { Foto as FotoData } from '../lib/fotky';
+import Foto from './Foto.astro';
+
+interface Props {
+  fotky: FotoData[];
+  alt: string;
+  /** Index první fotky v lightboxu (když je nad galerií ještě hlavní fotka). */
+  startIndex?: number;
+}
+
+const { fotky, alt, startIndex = 0 } = Astro.props;
+
+// Odkazy pro lightbox: WebP v několika šířkách, originál se nikdy nenahrává.
+const items = await Promise.all(
+  fotky.map(async (f, i) => {
+    const widths = [960, 1600, 2400].filter((w) => w <= f.image.width);
+    if (!widths.length) widths.push(f.image.width);
+    const variants = await Promise.all(widths.map((width) => getImage({ src: f.image, width, format: 'webp', quality: 75 })));
+    const largest = variants[variants.length - 1];
+    return {
+      ...f,
+      index: startIndex + i,
+      href: largest.src,
+      srcset: variants.map((v, j) => `${v.src} ${widths[j]}w`).join(', '),
+      width: largest.attributes.width ?? widths[widths.length - 1],
+      height: Math.round((f.image.height / f.image.width) * widths[widths.length - 1]),
+    };
+  }),
+);
+---
+<div class="masonry" data-masonry>
+  {items.map((item) => (
+    <a
+      class="masonry__item"
+      href={item.href}
+      data-pswp
+      data-pswp-srcset={item.srcset}
+      data-pswp-width={item.width}
+      data-pswp-height={item.height}
+      data-ratio={(item.image.height / item.image.width).toFixed(4)}
+      data-index={item.index}
+      data-cursor="otevřít"
+      data-reveal
+    >
+      <Foto image={item.image} alt={`${alt} – fotografie ${item.index + 1}`} sizes="(min-width: 900px) 33vw, 50vw" />
+    </a>
+  ))}
+</div>
+
+<style>
+  .masonry {
+    --cols: 2;
+    --gap: 8px;
+    columns: var(--cols);
+    column-gap: var(--gap);
+  }
+
+  @media (min-width: 900px) {
+    .masonry {
+      --cols: 3;
+    }
+  }
+
+  /* Po rozdělení do sloupců (JS) */
+  .masonry.is-laid-out {
+    columns: auto;
+    display: grid;
+    grid-template-columns: repeat(var(--cols), 1fr);
+    gap: var(--gap);
+    align-items: start;
+  }
+
+  .masonry :global(.masonry__col) {
+    display: grid;
+    gap: var(--gap);
+  }
+
+  .masonry__item {
+    display: block;
+    margin-bottom: var(--gap);
+    break-inside: avoid;
+    overflow: hidden;
+    background: var(--line);
+  }
+
+  .masonry.is-laid-out .masonry__item {
+    margin-bottom: 0;
+  }
+
+  .masonry__item :global(img) {
+    width: 100%;
+    transition: transform 0.6s var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .masonry__item:hover :global(img) {
+      transform: scale(1.02);
+    }
+  }
+</style>
