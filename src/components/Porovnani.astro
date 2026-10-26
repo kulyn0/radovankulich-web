@@ -1,0 +1,134 @@
+---
+// Posuvné porovnání RAW vs. finál (podle „Image Comparison Slider“ z 21st.dev, vanilla JS).
+// Ovládání myší, dotykem i klávesnicí (nativní range input).
+import Foto from './Foto.astro';
+import { foto } from '../lib/fotky';
+
+// TODO: vyměnit placeholder dvojici v src/fotky/postprodukce/ (before.jpg = RAW, after.jpg = finál)
+const before = foto('postprodukce/before.jpg');
+const after = foto('postprodukce/after.jpg');
+---
+{before && after && (
+  <div class="cmp" data-compare style="--pos: 50%">
+    <Foto image={after} alt="Finální upravená fotografie" sizes="(min-width: 1600px) 1600px, 100vw" class="cmp__img" />
+    <div class="cmp__before" aria-hidden="true">
+      <Foto image={before} alt="" sizes="(min-width: 1600px) 1600px, 100vw" class="cmp__img" />
+    </div>
+    <span class="cmp__label cmp__label--l mono">RAW</span>
+    <span class="cmp__label cmp__label--r mono">Finál</span>
+    <span class="cmp__handle" aria-hidden="true"></span>
+    <input class="cmp__range" type="range" min="0" max="100" step="0.1" value="50" aria-label="Poměr RAW a finální fotky" data-compare-range />
+  </div>
+)}
+
+<style>
+  .cmp {
+    position: relative;
+    overflow: hidden;
+    background: var(--line);
+    user-select: none;
+    touch-action: pan-y;
+  }
+
+  .cmp :global(.cmp__img),
+  .cmp :global(.cmp__img img) {
+    width: 100%;
+  }
+
+  .cmp__before {
+    position: absolute;
+    inset: 0;
+    clip-path: inset(0 calc(100% - var(--pos)) 0 0);
+  }
+
+  .cmp__before :global(img) {
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cmp__handle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: var(--pos);
+    width: 1px;
+    background: #fafafa;
+    pointer-events: none;
+  }
+
+  .cmp__handle::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 44px;
+    height: 44px;
+    translate: -50% -50%;
+    border: 1px solid #fafafa;
+    border-radius: 50%;
+  }
+
+  .cmp__label {
+    position: absolute;
+    top: 1rem;
+    padding: 0.3rem 0.5rem;
+    background: #fafafa;
+    color: var(--fg);
+    pointer-events: none;
+  }
+
+  .cmp__label--l {
+    left: 1rem;
+  }
+
+  .cmp__label--r {
+    right: 1rem;
+  }
+
+  .cmp__range {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .cmp {
+    cursor: ew-resize;
+  }
+
+  .cmp__range:focus-visible + .cmp__handle,
+  .cmp:has(.cmp__range:focus-visible) .cmp__handle::after {
+    outline: 2px solid #fafafa;
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  function init() {
+    document.querySelectorAll<HTMLElement>('[data-compare]').forEach((el) => {
+      const range = el.querySelector<HTMLInputElement>('[data-compare-range]')!;
+      const set = () => el.style.setProperty('--pos', `${range.value}%`);
+      range.addEventListener('input', set);
+      set();
+
+      // Tažení myší i prstem; vodorovný pohyb ovládá posuvník, svislý dál scrolluje stránku
+      const fromPointer = (e: PointerEvent) => {
+        const r = el.getBoundingClientRect();
+        range.value = String(Math.round(((e.clientX - r.left) / r.width) * 1000) / 10);
+        set();
+      };
+      el.addEventListener('pointerdown', (e) => {
+        el.setPointerCapture(e.pointerId);
+        fromPointer(e);
+      });
+      el.addEventListener('pointermove', (e) => {
+        if (el.hasPointerCapture(e.pointerId)) fromPointer(e);
+      });
+    });
+  }
+
+  document.addEventListener('astro:page-load', init);
+</script>
