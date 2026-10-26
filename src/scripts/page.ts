@@ -1,3 +1,5 @@
+import { initCursor } from './cursor';
+
 // Společná inicializace stránky; volá se při každém astro:page-load (i po view transition).
 
 let revealObserver: IntersectionObserver | undefined;
@@ -41,4 +43,5 @@ function initHeader() {
 export function initPage() {
   initHeader();
   initReveal();
+  initCursor();
 }

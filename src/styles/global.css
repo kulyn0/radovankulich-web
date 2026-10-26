@@ -156,6 +156,78 @@ button {
   white-space: nowrap;
 }
 
+/* Vlastní kurzor (jen myš, viz scripts/cursor.ts) */
+
+.has-cursor,
+.has-cursor * {
+  cursor: none !important;
+}
+
+.has-cursor input:not([type='range']),
+.has-cursor textarea {
+  cursor: text !important;
+}
+
+.cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+
+.cursor.is-visible {
+  opacity: 1;
+}
+
+.cursor::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--fg);
+  translate: -50% -50%;
+  transition:
+    width 0.3s var(--ease-out),
+    height 0.3s var(--ease-out),
+    background-color 0.3s var(--ease-out);
+}
+
+.cursor.is-link::before {
+  width: 36px;
+  height: 36px;
+  background: rgb(17 17 17 / 0.12);
+}
+
+.cursor.is-photo::before {
+  width: 64px;
+  height: 64px;
+}
+
+.cursor__label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  translate: -50% -50%;
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+
+.cursor.is-photo .cursor__label {
+  opacity: 1;
+}
+
 /* Animace při scrollu: skrytý stav jen s JS a bez reduced motion */
 
 @media (prefers-reduced-motion: no-preference) {
