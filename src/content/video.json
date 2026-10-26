@@ -1,0 +1,30 @@
+[
+  {
+    "title": "Showreel",
+    "year": 2025,
+    "type": "Showreel",
+    "src": "video/showreel.mp4",
+    "poster": "hero/2-ples.jpg"
+  },
+  {
+    "title": "TODO: název videa",
+    "year": 2025,
+    "type": "Aftermovie",
+    "src": "video/aftermovie.mp4",
+    "poster": "festivaly/01.jpg"
+  },
+  {
+    "title": "TODO: název videa",
+    "year": 2024,
+    "type": "Ples",
+    "src": "video/ples.mp4",
+    "poster": "plesy/01.jpg"
+  },
+  {
+    "title": "TODO: název videa",
+    "year": 2024,
+    "type": "Dron",
+    "src": "video/dron.mp4",
+    "poster": "cestovani/01.jpg"
+  }
+]

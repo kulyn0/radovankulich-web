@@ -1,0 +1,190 @@
+---
+// Náhled videa, který se po kliknutí roztáhne do přehrávače
+// (podle „Morphing Dialog – video preview“ z 21st.dev, vanilla JS + <dialog>).
+import Foto from './Foto.astro';
+import type { Video } from '../lib/video';
+
+interface Props {
+  video: Video;
+  /** Velký nadpis přes dlaždici (úvod) místo popisku pod ní (stránka Video). */
+  overlay?: string;
+  sizes?: string;
+}
+
+const { video, overlay, sizes = '100vw' } = Astro.props;
+const src = `${import.meta.env.BASE_URL}${video.src}`;
+---
+<div class="vt" data-video-tile>
+  <button class="vt__tile" type="button" data-video-open aria-haspopup="dialog" data-cursor="přehrát">
+    {video.poster && <Foto image={video.poster} alt="" sizes={sizes} class="vt__poster" />}
+    {video.ready && (
+      <video class="vt__loop" muted loop playsinline preload="none" aria-hidden="true" data-loop data-src={src}></video>
+    )}
+    {overlay && <span class="vt__overlay display">{overlay}</span>}
+    <span class="vt__play mono">Přehrát ▶</span>
+    <span class="visually-hidden">Přehrát video {video.title}</span>
+  </button>
+
+  {!overlay && (
+    <div class="vt__meta">
+      <h3 class="vt__title">{video.title}</h3>
+      <p class="mono muted">{video.year} / {video.type}</p>
+    </div>
+  )}
+
+  <dialog class="vt__dialog" aria-label={video.title} data-video-dialog>
+    <div class="vt__frame" data-video-frame>
+      {video.ready ? (
+        <video controls playsinline preload="none" data-player src={src}></video>
+      ) : (
+        <div class="vt__missing">
+          {video.poster && <Foto image={video.poster} alt="" sizes="100vw" />}
+          {/* TODO: doplnit soubor public/{video.src} */}
+          <p class="mono">Video se připravuje</p>
+        </div>
+      )}
+    </div>
+    <button class="vt__close mono" type="button" data-video-close>Zavřít ×</button>
+  </dialog>
+</div>
+
+<style>
+  .vt__tile {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    background: var(--line);
+    text-align: left;
+  }
+
+  .vt__tile :global(.vt__poster),
+  .vt__tile :global(.vt__poster img),
+  .vt__loop {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .vt__tile :global(img),
+  .vt__loop {
+    transition: transform 0.8s var(--ease-out);
+  }
+
+  @media (hover: hover) {
+    .vt__tile:hover :global(img),
+    .vt__tile:hover .vt__loop {
+      transform: scale(1.03);
+    }
+  }
+
+  .vt__overlay {
+    position: absolute;
+    inset: auto var(--gutter) clamp(1rem, 4vw, 2.5rem);
+    color: #fafafa;
+  }
+
+  .vt__play {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.4rem 0.6rem;
+    background: #fafafa;
+    color: var(--fg);
+  }
+
+  .vt__meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    padding-top: 0.75rem;
+  }
+
+  .vt__title {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+  }
+
+  .vt__meta p {
+    margin: 0;
+    white-space: nowrap;
+  }
+
+  .vt__dialog {
+    width: 100vw;
+    max-width: none;
+    height: 100vh;
+    height: 100dvh;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    overflow: hidden;
+  }
+
+  .vt__dialog::backdrop {
+    background: #111;
+    opacity: 0;
+    transition: opacity 0.4s ease-out;
+  }
+
+  .vt__dialog.is-open::backdrop {
+    opacity: 1;
+  }
+
+  .vt__frame {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(100vw - 2rem, (100dvh - 6rem) * 16 / 9);
+    aspect-ratio: 16 / 9;
+    translate: -50% -50%;
+    background: #000;
+    transform-origin: 0 0;
+  }
+
+  .vt__frame video,
+  .vt__missing,
+  .vt__missing :global(picture),
+  .vt__missing :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .vt__missing {
+    position: relative;
+  }
+
+  .vt__missing p {
+    position: absolute;
+    inset: auto 0 0 0;
+    margin: 0;
+    padding: 1rem;
+    color: #fafafa;
+    background: rgb(17 17 17 / 0.6);
+  }
+
+  .vt__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    padding: 0.5rem 0.75rem;
+    background: #fafafa;
+    color: var(--fg);
+    opacity: 0;
+    transition: opacity 0.3s ease-out 0.2s;
+  }
+
+  .vt__dialog.is-open .vt__close {
+    opacity: 1;
+  }
+</style>
