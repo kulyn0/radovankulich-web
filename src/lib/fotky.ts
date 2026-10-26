@@ -28,3 +28,8 @@ export function sirky(image: ImageMetadata, sirky = [480, 960, 1600, 2400]): num
   const list = sirky.filter((w) => w < image.width);
   return [...list, Math.min(image.width, sirky[sirky.length - 1])];
 }
+
+/** Fotka podle cesty relativně k src/fotky, např. "plesy/01.jpg". */
+export function foto(cesta: string): ImageMetadata | undefined {
+  return soubory[`/src/fotky/${cesta}`];
+}

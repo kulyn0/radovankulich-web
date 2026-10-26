@@ -1,16 +1,86 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactCta from '../components/ContactCta.astro';
+import Hero from '../components/Hero.astro';
+import PraceList from '../components/PraceList.astro';
+import VideoTile from '../components/VideoTile.astro';
+import Porovnani from '../components/Porovnani.astro';
+import { videa } from '../lib/video';
+import { foto } from '../lib/fotky';
+
+const showreel = videa[0];
 ---
-<BaseLayout>
-  <section class="wrap section">
-    <h1 class="display">Fotograf &amp; videomaker</h1>
-    <p class="mono muted">Prostějov a okolí</p>
+<BaseLayout ogImage={foto('hero/1-svatba.jpg')}>
+  <Hero />
+
+  <PraceList />
+
+  <section class="section video" aria-labelledby="video-title">
+    <div class="wrap">
+      <div class="head" data-reveal>
+        <h2 id="video-title" class="mono muted">Video</h2>
+        <a class="mono link-line" href={`${import.meta.env.BASE_URL}video/`}>Všechna videa →</a>
+      </div>
+      <div data-reveal>
+        {/* TODO: doplnit public/video/showreel.mp4 (smyčka + plné video) */}
+        <VideoTile video={showreel} overlay="Showreel" />
+      </div>
+    </div>
   </section>
 
-  <section id="prace" class="wrap section">
-    <!-- Sekce Práce: doplní se v dalším kroku -->
+  <section class="section post" aria-labelledby="post-title">
+    <div class="wrap post__grid">
+      <div class="post__text">
+        <h2 id="post-title" class="headline" data-reveal>Postprodukce</h2>
+        <p class="lead" data-reveal>Každá fotka prochází ruční úpravou – barvy, světlo, detail.</p>
+        <p class="mono muted" data-reveal>Táhněte posuvníkem: RAW / finál</p>
+      </div>
+      <div data-reveal>
+        <Porovnani />
+      </div>
+    </div>
   </section>
 
   <ContactCta />
 </BaseLayout>
+
+<script>
+  import { initVideo } from '../scripts/video';
+
+  document.addEventListener('astro:page-load', initVideo);
+</script>
+
+<style>
+  .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 1.5rem;
+  }
+
+  .head h2 {
+    margin: 0;
+  }
+
+  .post__grid {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .post__text {
+    display: grid;
+    gap: 1.25rem;
+    align-content: start;
+  }
+
+  .post__text p {
+    margin: 0;
+  }
+
+  @media (min-width: 1000px) {
+    .post__grid {
+      grid-template-columns: 1fr 2fr;
+      gap: 4rem;
+    }
+  }
+</style>
