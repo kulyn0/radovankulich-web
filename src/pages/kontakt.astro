@@ -1,8 +1,59 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { kontakt } from '../data/site';
 ---
-<BaseLayout title="Kontakt">
-  <section class="wrap section">
-    <h1 class="display">Kontakt</h1>
+<BaseLayout title="Kontakt" description={`Kontakt na fotografa Radovana Kuliche: ${kontakt.email}, ${kontakt.telefon}, Instagram ${kontakt.instagram}.`}>
+  <section class="wrap kontakt">
+    <h1 class="mono muted">Kontakt</h1>
+    <ul>
+      <li data-reveal>
+        <span class="mono muted">E-mail</span>
+        <a class="big link-line" href={`mailto:${kontakt.email}`}>{kontakt.email}</a>
+      </li>
+      <li data-reveal style="--reveal-delay: 0.06s">
+        <span class="mono muted">Telefon</span>
+        <a class="big link-line" href={kontakt.telefonHref}>{kontakt.telefon}</a>
+      </li>
+      <li data-reveal style="--reveal-delay: 0.12s">
+        <span class="mono muted">Instagram</span>
+        <a class="big link-line" href={kontakt.instagramUrl} rel="me noopener" target="_blank">{kontakt.instagram}</a>
+      </li>
+    </ul>
+    <p class="mono muted">IČO {kontakt.ico} / Sídlo {kontakt.sidlo}</p>
   </section>
 </BaseLayout>
+
+<style>
+  .kontakt {
+    display: grid;
+    gap: clamp(2rem, 6vw, 4rem);
+    padding-block: clamp(3rem, 10vw, 8rem);
+  }
+
+  h1,
+  p {
+    margin: 0;
+  }
+
+  ul {
+    display: grid;
+    gap: clamp(1.5rem, 4vw, 3rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li {
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .big {
+    justify-self: start;
+    font-size: clamp(2rem, 8vw, 7rem);
+    font-weight: 800;
+    line-height: 0.95;
+    letter-spacing: -0.045em;
+    overflow-wrap: anywhere;
+  }
+</style>
