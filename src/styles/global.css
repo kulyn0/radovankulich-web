@@ -102,12 +102,6 @@ button {
   line-height: 1.4;
 }
 
-@media (max-width: 600px) {
-  .mono {
-    font-size: 0.6875rem;
-  }
-}
-
 .muted {
   color: var(--muted);
 }
