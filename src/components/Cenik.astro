@@ -1,0 +1,73 @@
+---
+import { cenikPlesy, kontakt, url } from '../data/site';
+---
+<section class="cenik" aria-labelledby="cenik-title">
+  <h2 id="cenik-title" class="mono muted">Ceník</h2>
+  {cenikPlesy.length > 0 ? (
+    <table>
+      <tbody>
+        {cenikPlesy.map((r) => (
+          <tr>
+            <th scope="row">{r.polozka}</th>
+            <td class="mono">{r.cena}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  ) : (
+    <p class="cenik__empty">Ceník připravuji. Do té doby mi <a class="link-line" href={url('kontakt/')}>napište</a> a pošlu nabídku.</p>
+  )}
+  <a class="cenik__btn" href={kontakt.zonerama} target="_blank" rel="noopener">Kompletní galerie na Zoneramě ↗</a>
+</section>
+
+<style>
+  .cenik {
+    display: grid;
+    gap: 1.5rem;
+    max-width: 760px;
+  }
+
+  h2,
+  p {
+    margin: 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  tr {
+    border-bottom: 1px solid var(--line);
+  }
+
+  th,
+  td {
+    padding: 0.9rem 0;
+    vertical-align: baseline;
+  }
+
+  th {
+    text-align: left;
+    font-weight: 600;
+  }
+
+  td {
+    text-align: right;
+    white-space: nowrap;
+    font-size: 0.875rem;
+  }
+
+  .cenik__btn {
+    justify-self: start;
+    padding: 0.9rem 1.25rem;
+    background: var(--fg);
+    color: var(--bg);
+    font-weight: 600;
+    transition: background-color 0.25s ease-out;
+  }
+
+  .cenik__btn:hover {
+    background: #333;
+  }
+</style>

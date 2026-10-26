@@ -4,6 +4,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactCta from '../components/ContactCta.astro';
 import Foto from '../components/Foto.astro';
 import Galerie from '../components/Galerie.astro';
+import DragGalerie from '../components/DragGalerie.astro';
+import Cenik from '../components/Cenik.astro';
 import { kategorie, url, type Kategorie } from '../data/site';
 import { fotky } from '../lib/fotky';
 
@@ -50,10 +52,20 @@ const hlavniLightbox = hlavni ? await getImage({ src: hlavni.image, width: Math.
       </a>
     )}
 
-    <slot name="pred-galerii" />
+    {k.slug === 'plesy' && (
+      <div class="wrap cenik-wrap">
+        <Cenik />
+      </div>
+    )}
+
+    {ostatni.length > 0 && k.slug === 'plesy' && (
+      <section class="drag-wrap" aria-label={`Galerie ${k.nazev}`}>
+        <DragGalerie fotky={ostatni} alt={k.nazev} startIndex={1} />
+      </section>
+    )}
 
     {ostatni.length > 0 && (
-      <section class="wrap galerie" aria-label={`Galerie ${k.nazev}`}>
+      <section class:list={['wrap galerie', { 'galerie--fallback': k.slug === 'plesy' }]} aria-label={`Galerie ${k.nazev}`}>
         <Galerie fotky={ostatni} alt={k.nazev} startIndex={1} />
       </section>
     )}
@@ -103,6 +115,26 @@ const hlavniLightbox = hlavni ? await getImage({ src: hlavni.image, width: Math.
 
   .galerie {
     padding-block: 8px clamp(4rem, 10vw, 8rem);
+  }
+
+  .cenik-wrap {
+    padding-block: clamp(3rem, 8vw, 6rem);
+  }
+
+  /* Plesy: táhnutelné plátno jen pro myš na širší obrazovce, jinak masonry */
+  .drag-wrap {
+    display: none;
+    padding-bottom: clamp(4rem, 10vw, 8rem);
+  }
+
+  @media (hover: hover) and (pointer: fine) and (min-width: 900px) {
+    .drag-wrap {
+      display: block;
+    }
+
+    .galerie--fallback {
+      display: none;
+    }
   }
 
   .pager {

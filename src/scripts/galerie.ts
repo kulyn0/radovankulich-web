@@ -63,7 +63,9 @@ function onClick(e: MouseEvent) {
   e.preventDefault();
   const gallery = a.closest<HTMLElement>('[data-gallery]')!;
   // Pořadí v lightboxu podle data-index, ne podle DOM (sloupce mění pořadí).
+  // Jen viditelné odkazy (plesy mají plátno i masonry, jedno je vždy skryté)
   const data = [...gallery.querySelectorAll<HTMLAnchorElement>('a[data-pswp]')]
+    .filter((el) => el.offsetParent !== null)
     .sort((x, y) => Number(x.dataset.index) - Number(y.dataset.index))
     .map((el) => ({
       element: el,

@@ -1,0 +1,212 @@
+---
+// Nekonečné plátno fotek, po kterém se táhne myší; scroll stránky s ním jemně posouvá
+// (podle „Infinite Drag + Scroll Gallery“ z 21st.dev, vanilla JS).
+// Jen pro myš na širších obrazovkách; jinak se zobrazí masonry (řeší rodič přes CSS).
+import { getImage } from 'astro:assets';
+import type { Foto as FotoData } from '../lib/fotky';
+import Foto from './Foto.astro';
+
+interface Props {
+  fotky: FotoData[];
+  alt: string;
+  startIndex?: number;
+}
+
+const { fotky, alt, startIndex = 0 } = Astro.props;
+const COLS = 4;
+const ROWS = 3;
+const cells = Array.from({ length: COLS * ROWS }, (_, i) => ({ ...fotky[i % fotky.length], index: startIndex + (i % fotky.length) }));
+
+const lightbox = await Promise.all(
+  fotky.map((f) => getImage({ src: f.image, width: Math.min(2400, f.image.width), format: 'webp', quality: 75 })),
+);
+// Plátno se opakuje 3× ve směru x i y kvůli nekonečnému posunu
+const copies = Array.from({ length: 9 });
+---
+<div class="drag" data-drag aria-label={`Galerie ${alt}, táhněte myší`} role="region">
+  <div class="drag__track" data-drag-track style={`--cols: ${COLS}; --rows: ${ROWS}`}>
+    {copies.map((_, c) => (
+      <div class="drag__set" aria-hidden={c !== 4 ? 'true' : undefined}>
+        {cells.map((cell, i) => {
+          const lb = lightbox[i % fotky.length];
+          return (
+            <a
+              class="drag__cell"
+              href={lb.src}
+              data-pswp={c === 4 && i < fotky.length ? '' : undefined}
+              data-pswp-width={lb.attributes.width}
+              data-pswp-height={Math.round((cell.image.height / cell.image.width) * Number(lb.attributes.width))}
+              data-index={cell.index}
+              data-cursor="otevřít"
+              tabindex={c === 4 && i < fotky.length ? undefined : -1}
+              style={`--offset: ${(i % COLS) % 2 ? 0.5 : 0}`}
+            >
+              <Foto image={cell.image} alt={c === 4 ? `${alt} – fotografie ${cell.index + 1}` : ''} sizes="320px" />
+            </a>
+          );
+        })}
+      </div>
+    ))}
+  </div>
+  <p class="drag__hint mono muted">Táhněte</p>
+</div>
+
+<style>
+  .drag {
+    --cell-w: 300px;
+    --cell-h: 375px;
+    --gap: 8px;
+    position: relative;
+    height: 85vh;
+    overflow: hidden;
+    cursor: grab;
+    user-select: none;
+    touch-action: pan-y;
+  }
+
+  .drag.is-dragging {
+    cursor: grabbing;
+  }
+
+  .drag__track {
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    will-change: transform;
+  }
+
+  .drag__set {
+    display: grid;
+    grid-template-columns: repeat(var(--cols), var(--cell-w));
+    grid-auto-rows: var(--cell-h);
+    gap: var(--gap);
+    padding: 0 var(--gap) var(--gap) 0;
+  }
+
+  .drag__cell {
+    display: block;
+    overflow: hidden;
+    background: var(--line);
+    transform: translateY(calc(var(--offset) * var(--cell-h)));
+  }
+
+  .drag__cell :global(picture),
+  .drag__cell :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    -webkit-user-drag: none;
+  }
+
+  .drag__hint {
+    position: absolute;
+    right: var(--gutter);
+    bottom: 1rem;
+    margin: 0;
+    padding: 0.3rem 0.5rem;
+    background: var(--bg);
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  let cleanup: (() => void) | undefined;
+
+  function init() {
+    cleanup?.();
+    const root = document.querySelector<HTMLElement>('[data-drag]');
+    if (!root || root.offsetParent === null) return;
+    const track = root.querySelector<HTMLElement>('[data-drag-track]')!;
+    const set = track.firstElementChild as HTMLElement;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let setW = set.offsetWidth;
+    let setH = set.offsetHeight;
+    // Výchozí pohled na prostřední kopii
+    let x = -setW;
+    let y = -setH;
+    let vx = 0;
+    let vy = 0;
+    let dragging = false;
+    let moved = 0;
+    let lastX = 0;
+    let lastY = 0;
+    let raf = 0;
+    let scrollBase = window.scrollY;
+
+    const wrap = (v: number, size: number) => ((((v % size) + size) % size) - size) || -size;
+
+    const render = () => {
+      if (!dragging && !reduce) {
+        x += vx;
+        y += vy;
+        vx *= 0.94;
+        vy *= 0.94;
+      }
+      // Scroll stránky posouvá plátno jemně nahoru
+      const drift = (window.scrollY - scrollBase) * 0.4;
+      track.style.transform = `translate3d(${wrap(x, setW)}px, ${wrap(y - drift, setH)}px, 0)`;
+      raf = requestAnimationFrame(render);
+    };
+
+    const down = (e: PointerEvent) => {
+      if (e.pointerType !== 'mouse') return;
+      dragging = true;
+      moved = 0;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      vx = vy = 0;
+    };
+    const move = (e: PointerEvent) => {
+      if (!dragging) return;
+      const dx = e.clientX - lastX;
+      const dy = e.clientY - lastY;
+      lastX = e.clientX;
+      lastY = e.clientY;
+      x += dx;
+      y += dy;
+      vx = dx;
+      vy = dy;
+      moved += Math.abs(dx) + Math.abs(dy);
+      // Capture až při skutečném tažení, jinak by klik nedošel na fotku (lightbox)
+      if (moved > 6 && !root.hasPointerCapture(e.pointerId)) {
+        root.setPointerCapture(e.pointerId);
+        root.classList.add('is-dragging');
+      }
+    };
+    const up = () => {
+      dragging = false;
+      root.classList.remove('is-dragging');
+    };
+    // Po tažení nesmí klik otevřít lightbox
+    const click = (e: MouseEvent) => {
+      if (moved > 6) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      }
+    };
+    const resize = () => {
+      setW = set.offsetWidth;
+      setH = set.offsetHeight;
+    };
+
+    root.addEventListener('pointerdown', down);
+    root.addEventListener('pointermove', move);
+    root.addEventListener('pointerup', up);
+    root.addEventListener('pointercancel', up);
+    root.addEventListener('click', click, true);
+    window.addEventListener('resize', resize);
+    scrollBase = window.scrollY;
+    raf = requestAnimationFrame(render);
+
+    cleanup = () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('resize', resize);
+    };
+  }
+
+  document.addEventListener('astro:page-load', init);
+</script>

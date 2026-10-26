@@ -77,3 +77,11 @@ export function url(path = ''): string {
   const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   return `${base}/${path.replace(/^\//, '')}`;
 }
+
+export interface PolozkaCeniku {
+  polozka: string;
+  cena: string;
+}
+
+// TODO: doplnit ceník plesů (položka + cena) – ceny nevymýšlet, dodá Radovan.
+export const cenikPlesy: PolozkaCeniku[] = [];
