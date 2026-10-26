@@ -1,8 +1,51 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ContactCta from '../components/ContactCta.astro';
+import VideoTile from '../components/VideoTile.astro';
+import { videa } from '../lib/video';
 ---
-<BaseLayout title="Video">
-  <section class="wrap section">
+<BaseLayout title="Video" description="Videa Radovana Kuliche – showreel, aftermovie, plesy a záběry z dronu." ogImage={videa[0]?.poster}>
+  <section class="wrap intro">
+    <p class="mono muted">Video &amp; střih / dron</p>
     <h1 class="display">Video</h1>
   </section>
+
+  <section class="wrap grid" aria-label="Seznam videí">
+    {videa.map((v, i) => (
+      <div data-reveal style={`--reveal-delay: ${(i % 2) * 0.08}s`}>
+        <VideoTile video={v} sizes="(min-width: 800px) 50vw, 100vw" />
+      </div>
+    ))}
+  </section>
+
+  <ContactCta />
 </BaseLayout>
+
+<script>
+  import { initVideo } from '../scripts/video';
+
+  document.addEventListener('astro:page-load', initVideo);
+</script>
+
+<style>
+  .intro {
+    display: grid;
+    gap: 1.25rem;
+    padding-block: clamp(3rem, 10vw, 8rem) clamp(2rem, 6vw, 4rem);
+  }
+
+  .intro p {
+    margin: 0;
+  }
+
+  .grid {
+    display: grid;
+    gap: 2.5rem 8px;
+  }
+
+  @media (min-width: 800px) {
+    .grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>
