@@ -1,0 +1,137 @@
+---
+// Štos fotek, které jde myší odhazovat (podle „Photo Stack“ z 21st.dev, vanilla JS).
+// Na dotyku statický štos; klepnutí přesune vrchní fotku dospod.
+import Foto from './Foto.astro';
+import { fotky } from '../lib/fotky';
+
+// TODO: doplnit 5–6 fotek ze zákulisí do src/fotky/zakulisi/ (teď jen profilová fotka)
+const items = fotky('zakulisi').slice(0, 6);
+const rotations = [-4, 3, -2, 5, -6, 2];
+---
+<div class="stack" data-stack aria-label="Fotky ze zákulisí" role="group">
+  {items.map((f, i) => (
+    <div class="stack__card" data-card style={`--r: ${rotations[i % rotations.length]}deg; z-index: ${items.length - i}`}>
+      <Foto image={f.image} alt={i === 0 ? 'Radovan Kulich' : 'Ze zákulisí focení'} sizes="(min-width: 900px) 40vw, 80vw" eager={i === 0} />
+    </div>
+  ))}
+  {items.length > 1 && <p class="stack__hint mono muted">Odhoďte fotku</p>}
+</div>
+
+<style>
+  .stack {
+    position: relative;
+    width: min(100%, 460px);
+    aspect-ratio: 4 / 5;
+    margin-inline: auto;
+  }
+
+  .stack__card {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    background: var(--line);
+    border: 8px solid #fff;
+    transform: rotate(var(--r));
+    transition: transform 0.5s var(--ease-out);
+    touch-action: none;
+    user-select: none;
+  }
+
+  .stack__card :global(picture),
+  .stack__card :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  .stack__card.is-dragging {
+    transition: none;
+    cursor: grabbing;
+  }
+
+  .stack__hint {
+    position: absolute;
+    left: 0;
+    bottom: -2.5rem;
+    margin: 0;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .stack__card {
+      cursor: grab;
+    }
+  }
+
+  @media not ((hover: hover) and (pointer: fine)) {
+    .stack__card {
+      touch-action: pan-y;
+    }
+  }
+</style>
+
+<script>
+  function init() {
+    const stack = document.querySelector<HTMLElement>('[data-stack]');
+    if (!stack) return;
+    let cards = [...stack.querySelectorAll<HTMLElement>('[data-card]')];
+    if (cards.length < 2) return;
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    const order = () => cards.forEach((c, i) => (c.style.zIndex = String(cards.length - i)));
+
+    // Vrchní fotku přesune dospod štosu
+    const sendBack = (card: HTMLElement) => {
+      cards = [...cards.slice(1), card];
+      order();
+    };
+
+    if (!fine) {
+      stack.addEventListener('click', () => sendBack(cards[0]));
+      return;
+    }
+
+    let startX = 0;
+    let startY = 0;
+    let dx = 0;
+    let dy = 0;
+
+    stack.addEventListener('pointerdown', (e) => {
+      const card = cards[0];
+      if (!card.contains(e.target as Node)) return;
+      card.setPointerCapture(e.pointerId);
+      card.classList.add('is-dragging');
+      startX = e.clientX;
+      startY = e.clientY;
+      dx = dy = 0;
+
+      const move = (ev: PointerEvent) => {
+        dx = ev.clientX - startX;
+        dy = ev.clientY - startY;
+        card.style.transform = `translate(${dx}px, ${dy}px) rotate(calc(var(--r) + ${dx / 20}deg))`;
+      };
+      const up = () => {
+        card.removeEventListener('pointermove', move);
+        card.removeEventListener('pointerup', up);
+        card.removeEventListener('pointercancel', up);
+        card.classList.remove('is-dragging');
+        const far = Math.hypot(dx, dy) > 120;
+        if (far) {
+          // Odletí ve směru hodu a vrátí se dospod
+          card.style.transform = `translate(${dx * 2.2}px, ${dy * 2.2}px) rotate(calc(var(--r) + ${dx / 8}deg))`;
+          setTimeout(() => {
+            sendBack(card);
+            card.style.transform = '';
+          }, 260);
+        } else {
+          card.style.transform = '';
+        }
+      };
+      card.addEventListener('pointermove', move);
+      card.addEventListener('pointerup', up);
+      card.addEventListener('pointercancel', up);
+    });
+  }
+
+  document.addEventListener('astro:page-load', init);
+</script>

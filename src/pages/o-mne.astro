@@ -1,8 +1,77 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ContactCta from '../components/ContactCta.astro';
+import PhotoStack from '../components/PhotoStack.astro';
+import { foto } from '../lib/fotky';
+
+const dovednosti = ['Fotografie', 'Video & střih', 'Dron', 'Postprodukce'];
 ---
-<BaseLayout title="O mně">
-  <section class="wrap section">
-    <h1 class="display">O mně</h1>
+<BaseLayout title="O mně" description="Radovan Kulich – fotograf a videomaker z Prostějova. Fotografie, video a střih, dron, postprodukce." ogImage={foto('zakulisi/01.jpg')}>
+  <section class="wrap about">
+    <div class="about__text">
+      <p class="mono muted">O mně</p>
+      <h1 class="display">Kdo jsem</h1>
+      <p class="lead">K fotografii jsem se dostal už v dětství, kdy jsem neustále půjčoval zrcadlovku svých rodičů a zkoušel zachytit svět kolem sebe.</p>
+      <p>Stejně jako mnoho kluků v té době jsem chtěl tvořit obsah na internet, což mě přivedlo i k práci s videem.</p>
+      <p>Svoji vášeň pro focení jsem znovu objevil v roce 2020. Od té doby jsem nafotil desítky společenských akcí v Prostějově a jeho okolí.</p>
+      <ul class="tags mono" aria-label="Dovednosti">
+        {dovednosti.map((d, i) => (
+          <li>{i > 0 && <span aria-hidden="true" class="muted">·</span>}{d}</li>
+        ))}
+      </ul>
+    </div>
+    <div class="about__stack">
+      <PhotoStack />
+    </div>
   </section>
+
+  <ContactCta />
 </BaseLayout>
+
+<style>
+  .about {
+    display: grid;
+    gap: 4rem;
+    padding-block: clamp(3rem, 10vw, 8rem);
+  }
+
+  .about__text {
+    display: grid;
+    gap: 1.25rem;
+    align-content: start;
+  }
+
+  .about__text p {
+    margin: 0;
+    max-width: 52ch;
+  }
+
+  .about__text h1 {
+    margin-bottom: 1rem;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 1rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .tags li {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .about__stack {
+    padding-bottom: 3rem;
+  }
+
+  @media (min-width: 900px) {
+    .about {
+      grid-template-columns: 1.1fr 1fr;
+      align-items: center;
+    }
+  }
+</style>
